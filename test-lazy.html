@@ -2,11 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Galaxy Test</title>
-
-    <!-- Performance: Preconnect to Klaviyo CDN -->
-    <link rel="preconnect" href="https://static.klaviyo.com" crossorigin />
-    <link rel="dns-prefetch" href="https://static.klaviyo.com" />
+    <title>Galaxy Test - Lazy Load</title>
 
     <style>
       .container {
@@ -34,6 +30,7 @@
       [class^="klaviyo-form-"] {
         min-height: 100px;
         position: relative;
+        margin-bottom: 20px;
       }
 
       [class^="klaviyo-form-"]::before {
@@ -73,51 +70,82 @@
 
     <script>
       (function () {
-        // Flag to prevent duplicate loads
+        // Single flag to prevent duplicate script loading
         let klaviyoScriptLoaded = false;
-        let klaviyoFormsInitialized = false;
+        let klaviyoInitialized = false;
+
+        // Get all form containers
+        const formContainers = document.querySelectorAll(
+          '[class^="klaviyo-form-"]'
+        );
 
         function initKlaviyoForms() {
-          // Prevent multiple initializations
-          if (klaviyoFormsInitialized) return;
-          klaviyoFormsInitialized = true;
+          if (klaviyoInitialized) return;
+          klaviyoInitialized = true;
 
-          // Remove loading skeleton once forms are loaded
+          // Remove loading skeleton after forms render
           setTimeout(() => {
-            document
-              .querySelectorAll('[class^="klaviyo-form-"]')
-              .forEach((form) => {
-                form.classList.add("klaviyo-loaded");
-              });
-          }, 500);
+            formContainers.forEach((form) => {
+              form.classList.add("klaviyo-loaded");
+            });
+          }, 800);
         }
 
-        // Load Klaviyo script only once
         function loadKlaviyoScript() {
           if (klaviyoScriptLoaded) return;
           klaviyoScriptLoaded = true;
 
-          const kl = document.createElement("script");
-          kl.type = "text/javascript";
-          kl.async = true;
-          kl.src =
+          // Add preconnect dynamically when we actually need to load
+          const preconnect = document.createElement("link");
+          preconnect.rel = "preconnect";
+          preconnect.href = "https://static.klaviyo.com";
+          preconnect.crossOrigin = "anonymous";
+          document.head.appendChild(preconnect);
+
+          // Load the script
+          const script = document.createElement("script");
+          script.type = "text/javascript";
+          script.async = true;
+          script.src =
             "https://static.klaviyo.com/onsite/js/klaviyo.js?company_id=YwabkH";
-          kl.onload = initKlaviyoForms;
-          document.head.appendChild(kl);
+          script.onload = initKlaviyoForms;
+          document.head.appendChild(script);
         }
 
-        // Start loading immediately
-        loadKlaviyoScript();
+        // Lazy load with Intersection Observer
+        if ("IntersectionObserver" in window && formContainers.length > 0) {
+          const observer = new IntersectionObserver(
+            (entries) => {
+              // Load when ANY form becomes visible
+              const anyVisible = entries.some((entry) => entry.isIntersecting);
+              if (anyVisible) {
+                loadKlaviyoScript();
+                observer.disconnect();
+              }
+            },
+            {
+              rootMargin: "100px", // Start loading 100px before form enters viewport
+              threshold: 0.01,
+            }
+          );
+
+          // Observe all forms
+          formContainers.forEach((container) => observer.observe(container));
+
+          // Fallback: auto-load after 2 seconds if user doesn't scroll
+          setTimeout(loadKlaviyoScript, 2000);
+        } else {
+          // No IntersectionObserver support - load immediately
+          loadKlaviyoScript();
+        }
       })();
 
-      // DOM-related scripts - wait for DOMContentLoaded
+      // DOM-related scripts
       document.addEventListener("DOMContentLoaded", () => {
-        // Your custom form query (waits for DOM to be ready)
         console.log("before form ");
         const form = document.querySelector('[data-testid="hiahiahia"]');
         console.log("form ", form);
 
-        // Hover effect logic
         const innerContainer = document.querySelector(".content-1");
 
         if (innerContainer) {
@@ -129,11 +157,6 @@
             innerContainer.classList.remove("hover-effect");
           });
         }
-
-        // Optional: Mouse tracking (currently commented out)
-        /*window.addEventListener("mousemove", (event) => {
-          console.log(event.clientX, event.clientY);
-        });*/
       });
     </script>
   </body>
