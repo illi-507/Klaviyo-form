@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Galaxy Test</title>
+
+    <!-- 引入你的打包文件 -->
+    <link rel="stylesheet" href="./galaxy-background.css" />
+    <script src="./galaxy-background.iife.js"></script>
+    <style>
+      .container {
+        height: 500px;
+        width: 50%;
+        border: 1px solid green;
+        padding: 20px;
+        box-sizing: border-box;
+        position: relative;
+      }
+      .content-1 {
+        border: 1px solid red;
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+      }
+
+      .hover-effect {
+        background-color: aquamarine;
+      }
+    </style>
+  </head>
+  <body style="margin: 0">
+    <!-- <div class="container">
+      <div class="content-1">1234</div>
+    </div>
+    <form data-testid="hiahiahia">This is a form</form>
+-->
+
+    <div class="klaviyo-form-YanyUp"></div>
+    <div class="klaviyo-form-StNbGd"></div>
+    <div class="klaviyo-form-SHwSjN"></div>
+    <div class="klaviyo-form-RmF6gM"></div>
+
+    <script async>
+      (function () {
+        var kl = document.createElement("script");
+        kl.type = "text/javascript";
+        kl.async = true;
+        kl.src =
+          "https://static.klaviyo.com/onsite/js/klaviyo.js?company_id=YwabkH";
+        kl.onload = function () {
+          // 表单加载后手动触发一次渲染
+          if (window._klOnsite?.loadForms) window._klOnsite.loadForms();
+        };
+        document.head.appendChild(kl);
+      })();
+
+      // 防止 SPA 页面或动态加载丢失表单
+      document.addEventListener("DOMContentLoaded", () => {
+        setTimeout(() => {
+          if (window._klOnsite?.loadForms) window._klOnsite.loadForms();
+        }, 500);
+      });
+
+      /*window.addEventListener("mousemove", (event) => {
+        console.log(event.clientX, event.clientY);
+      });*/
+      console.log("before form ");
+      const form = document.querySelector('[data-testid="hiahiahia"]');
+      console.log("form ", form);
+
+      let innerContainer = document.querySelector(".content-1");
+
+      innerContainer.addEventListener("mouseenter", () => {
+        innerContainer.classList.add("hover-effect");
+      });
+
+      innerContainer.addEventListener("mouseleave", () => {
+        innerContainer.classList.remove("hover-effect");
+      });
+    </script>
+  </body>
+</html>
