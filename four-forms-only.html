@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Klaviyo - 4 Forms Only</title>
+
+    <!-- Performance: Preconnect to Klaviyo CDN -->
+    <link rel="preconnect" href="https://static.klaviyo.com" crossorigin />
+    <link rel="dns-prefetch" href="https://static.klaviyo.com" />
+
+    <style>
+      body {
+        margin: 0;
+        padding: 40px;
+        font-family:
+          system-ui,
+          -apple-system,
+          BlinkMacSystemFont,
+          sans-serif;
+        background: #f7f7f7;
+      }
+
+      h1 {
+        color: #333;
+        margin-bottom: 30px;
+      }
+
+      /* Loading skeleton for Klaviyo forms */
+      [class^="klaviyo-form-"] {
+        min-height: 150px;
+        margin-bottom: 30px;
+        position: relative;
+        background: #fff;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      [class^="klaviyo-form-"]::before {
+        content: "";
+        display: block;
+        height: 120px;
+        background: linear-gradient(
+          90deg,
+          #f0f0f0 25%,
+          #e8e8e8 50%,
+          #f0f0f0 75%
+        );
+        background-size: 200% 100%;
+        animation: klaviyo-loading 1.5s infinite;
+        border-radius: 4px;
+      }
+
+      [class^="klaviyo-form-"].klaviyo-loaded::before {
+        display: none;
+      }
+
+      @keyframes klaviyo-loading {
+        0% {
+          background-position: 200% 0;
+        }
+        100% {
+          background-position: -200% 0;
+        }
+      }
+
+      /* Form labels */
+      .form-label {
+        position: absolute;
+        top: -10px;
+        left: 20px;
+        background: #fff;
+        padding: 0 10px;
+        font-size: 12px;
+        color: #666;
+        font-weight: 600;
+        z-index: 1;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Klaviyo Forms - 4 Forms Only</h1>
+
+    <div class="klaviyo-form-YanyUp">
+      <span class="form-label">Form: YanyUp</span>
+    </div>
+
+    <div class="klaviyo-form-StNbGd">
+      <span class="form-label">Form: StNbGd</span>
+    </div>
+
+    <div class="klaviyo-form-SHwSjN">
+      <span class="form-label">Form: SHwSjN</span>
+    </div>
+
+    <div class="klaviyo-form-RmF6gM">
+      <span class="form-label">Form: RmF6gM</span>
+    </div>
+
+    <script>
+      (function () {
+        // Single script load flag
+        let klaviyoScriptLoaded = false;
+        let klaviyoFormsInitialized = false;
+
+        function initKlaviyoForms() {
+          if (klaviyoFormsInitialized) return;
+          klaviyoFormsInitialized = true;
+
+          // Remove loading skeleton once forms are loaded
+          setTimeout(() => {
+            document
+              .querySelectorAll('[class^="klaviyo-form-"]')
+              .forEach((form) => {
+                form.classList.add("klaviyo-loaded");
+              });
+          }, 800);
+
+          // Debug: Log loaded forms
+          console.log("=== KLAVIYO FORMS LOADED ===");
+          setTimeout(() => {
+            const embeddedForms = document.querySelectorAll('[class^="klaviyo-form-"]');
+            console.log(`✅ Embedded forms: ${embeddedForms.length}`);
+            embeddedForms.forEach((form) => {
+              console.log(`  - ${form.className}`);
+            });
+
+            // Check for unwanted auto-injected forms
+            const autoForms = document.querySelectorAll('.needsclick[class*="kl-private-reset-css"]');
+            if (autoForms.length > 0) {
+              console.warn(`⚠️ Auto-injected forms detected: ${autoForms.length}`);
+              console.warn("These may be configured in your Klaviyo dashboard to auto-display");
+            } else {
+              console.log("✅ No unwanted auto-injected forms detected");
+            }
+          }, 1200);
+        }
+
+        // Load Klaviyo script only once
+        function loadKlaviyoScript() {
+          if (klaviyoScriptLoaded) return;
+          klaviyoScriptLoaded = true;
+
+          const script = document.createElement("script");
+          script.type = "text/javascript";
+          script.async = true;
+          script.src =
+            "https://static.klaviyo.com/onsite/js/klaviyo.js?company_id=YwabkH";
+          script.onload = initKlaviyoForms;
+          document.head.appendChild(script);
+        }
+
+        // Start loading immediately
+        loadKlaviyoScript();
+      })();
+    </script>
+  </body>
+</html>
